@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#can{
+				border: 1px solid gray;
+				background: black;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="can" width="400" height="400"></canvas>
+		<script type="text/javascript">
+			var can = document.getElementById('can');
+			var ctx = can.getContext("2d");
+			
+//			设置一个随机函数
+			function rand(max,min){
+				return parseInt(Math.random()*(max-min)+min);
+			}
+			
+//			动画类
+			function Animateclass(){
+				this.x = rand(400,0);
+				this.y = 0;
+				this.radius = rand(6,3);
+				this.color = 'white';
+				this.speed = rand(6,1);
+				this.startAngle = 0;
+				this.endAngle = Math.PI*2;
+			}
+//			绘制图形
+			Animateclass.prototype.draw = function(){
+				ctx.save();
+				ctx.fillStyle = this.color;
+				ctx.beginPath();
+				ctx.arc(this.x,this.y,this.radius,this.startAngle,this.endAngle,false);
+				ctx.fill();
+				ctx.restore();
+//				绘制完成开始运动
+				this.move();
+			}
+//			运动函数
+			Animateclass.prototype.move = function(){
+				console.log(this.y);
+				this.y += this.speed;
+			}
+//			存放粒子的数组
+			var dataArr = [];
+//			回调函数，不停创建、运动
+			function show(){
+//				清空画布
+				ctx.clearRect(0,0,can.width,can.height);
+//				设定粒子数量为20
+				if(dataArr.length < 20){
+					var a = new Animateclass();
+//					存放粒子
+					dataArr.push(a);
+				}
+//				遍历粒子,绘制,运动
+				for(var i in dataArr){
+//					不断运动,当粒子高度大于画布,重新创建
+					if(dataArr[i].y > can.height){
+						dataArr[i] = new Animateclass();
+					}
+//					绘制
+					dataArr[i].draw();
+				}
+//				类定时器
+				requestAnimationFrame(show);
+				
+			}
+//			函数调用
+			show();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#can{
+				border: 1px solid black;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<canvas id="can" width="400" height="400"></canvas>
+
+		<script type="text/javascript">
+			var can = document.getElementById('can');
+			var ctx = can.getContext('2d');
+			//定时器 requesAnimationFrame
+			var rf = null;
+//			创建一个随机函数
+			function rand(min,max){
+				return parseInt(Math.random()*(max-min)-min);
+			}
+		
+			//创建一个粒子类
+			function Dots(x,y){
+				this.x = x;
+				this.y = y;
+				//开始的随机位置
+				this.startX = rand(0,can.width);
+				this.startY = rand(0,can.height);
+				//设置颜色
+				this.color = 'blue';
+				//设置圆的半径
+				this.radius = 2;
+				//其他物体运动的次数
+				this.during = 50;
+				//计数
+				this.count = 0;
+				//每次粒子运动x，y轴方向的增量
+				this.dx = (this.x-this.startX)/50;
+				this.dy = (this.y-this.startY)/50;
+			}
+			//粒子绘制
+			Dots.prototype.draw = function(){
+				ctx.save();
+				ctx.beginPath();
+				ctx.fillStyle = this.color;
+				ctx.arc(this.startX,this.startY,this.radius,Math.PI*2,false);
+				ctx.closePath();
+				ctx.fill();
+				ctx.restore();
+			}
+			//粒子运动
+			Dots.prototype.move = function(){
+				this.count++;
+				console.log(this.count);
+				if(this.count<=this.during){
+					this.startX += this.dx;
+					this.startY += this.dy;
+				}else{
+					cancelAnimationFrame(rf);
+				}
+			}
+			//存储符合条件的粒子
+			var dataArr = [];
+			//绘制文本
+			function dataInit(){
+				ctx.save();
+				ctx.beginPath();
+				ctx.font = '105px Microsoft Yahei';
+				ctx.fillStyle = 'blue';
+				ctx.textBaseline = 'middle';
+				ctx.textAlign = 'center';
+				ctx.fillText("canvas",can.width/2,can.height/2);
+				ctx.restore();	
+				var imageData = ctx.getImageData(0,0,can.width,can.height);
+//				遍历像素数组
+				for(var i = 0;i<can.width;i+=5){
+					for(var j = 0;j<can.height;j+=5){
+						var k = [j*imageData.height + i]*4;
+				//		取出aphla值大于160的像素点
+						if(imageData.data[k+3] >160){
+							dataArr.push(new Dots(i,j));
+						}
+					}
+				}
+//				清除画布,用以绘制粒子文本
+				ctx.clearRect(0,0,can.width,can.height);
+//				遍历符合条件的像素数组,用圆绘制
+				for(var i in dataArr){
+					var d = dataArr[i];
+					ctx.beginPath();
+					ctx.fillStyle = d.color;
+					ctx.arc(d.x,d.y,d.radius,0,Math.PI*2,false);
+					ctx.closePath();
+					ctx.fill();
+				}
+			}
+			//回调函数
+			function init(){
+				//清画布
+				can.width = can.width;
+				rf = requestAnimationFrame(init);
+				//遍历符合条件的像素数组,每个点绘制，移动
+				for(var i in dataArr){
+					var po = dataArr[i];
+					po.draw();
+					po.move();
+				}
+			}
+//			调用函数
+			dataInit();
+			init();
+		</script>
+	</body>
+</html>

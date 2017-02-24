@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<canvas id="can" width="400" height="400"></canvas>	
+		
+		<script type="text/javascript">
+			var can = document.getElementById('can');
+			var ctx = can.getContext('2d');
+			run();
+			function run(){
+			can.height = can.height;
+//			坐标
+			ctx.translate(200,200);
+//			画分针
+			for(var i=0;i<60;i++){
+				ctx.lineWidth = '3';
+//				if(i%5!=0){
+					ctx.beginPath();
+					ctx.rotate(6*Math.PI/180);
+					ctx.moveTo(150,0);
+					ctx.lineTo(160,0);
+//					ctx.stroke();
+//				}
+				ctx.stroke();
+				
+			}
+//			画时针
+			for(var i=0;i<12;i++){
+				ctx.lineWidth = '4';
+				ctx.beginPath();
+				ctx.rotate(30*Math.PI/180);
+				ctx.moveTo(145,0);
+				ctx.lineTo(160,0);
+				ctx.stroke();
+			}
+			
+//			设置文字距离时钟中心点的距离
+			var R = 172;
+//			设置字体
+			ctx.font='20px arial';
+//			绘制数字
+			for(var i =1;i<13;i++){
+				var x = R*Math.cos(i*Math.PI/6-Math.PI/2);
+				var y = R*Math.sin(i*Math.PI/6-Math.PI/2);
+				ctx.textBaseline = 'middle';
+				var len = ctx.measureText(i);
+				ctx.fillText(i,x-len.width/2,y);
+			}
+			
+//			获取当前时间
+			var t = new Date();
+//			获取小时数
+			var h = t.getHours();
+			h = h<12?h:(h-12);
+//			获取分钟数
+			var m = t.getMinutes();
+//			获取秒数
+			var s = t.getSeconds();
+			
+			ctx.save();
+//			画时针
+			ctx.lineWidth = '5';
+			ctx.beginPath();
+//			时针旋转角度 = 30° * (h+m/60+s/3600);
+//			分针旋转角度 = 6° * (m+s/3600);
+//			秒针旋转角度 = 6° * s;
+			ctx.rotate(Math.PI/6*(h+m/60+s/3600) - Math.PI/2);
+			ctx.moveTo(-10,0);
+			ctx.lineTo(80,0);
+			ctx.stroke();
+			ctx.restore();
+//			画分针
+			ctx.save();
+			ctx.lineWidth = '4';
+			ctx.beginPath();
+			ctx.rotate(Math.PI/30*(m+s/3600) -Math.PI/2);
+			ctx.moveTo(-12,0);
+			ctx.lineTo(105,0);
+			ctx.stroke();
+			ctx.restore();
+//			画秒针
+			ctx.save();
+			ctx.lineWidth = '3';
+			ctx.beginPath();
+			ctx.rotate(Math.PI/30*s - Math.PI/2);
+			ctx.moveTo(-14,0);
+			ctx.lineTo(120,0);
+			ctx.stroke();
+			ctx.restore();
+			}
+			setInterval(run,1000);
+		</script>
+	</body>
+</html>

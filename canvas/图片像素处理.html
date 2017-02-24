@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>图片像素处理</title>
+	</head>
+	<body>
+		<!--<img src="img/b3b7d0a20cf431adf91f48764936acaf2fdd98ab.jpg" id='img' width="250px" height="400px"/>-->
+		<input type="button" id="bw_btn" value="黑白" />
+		<input type="button" id="fg_btn" value="复古" />
+		<input type="button" id="rm_btn" value="红色蒙版" />
+		<br />
+		<canvas id="can" width="500" height="700" style="border: 1px solid gray;"></canvas>	
+		<div id="div" style="width: 50px;height: 50px;display: inline-block;border: 1px solid gray;"></div>
+		<script type="text/javascript">
+		window.onload = function(){
+//			画布
+			var can = document.getElementById('can');
+//			画笔
+			var ctx = can.getContext('2d');
+		/*	像素处理的两个方法
+		 * 1.getImageDate(x,y,widht,height);
+		 * x,y: 表示去图片像素的位置
+		 * width,height: 取出像素的宽高
+		 * getImageDate(0,0,2,2);	2*2=4个像素
+		 * 返回值：返回一个像素信息的数组，其中每个像素包括：
+		 * r,g,b,alpha，每个都是0-255的值
+		 * 这个数组的大小由像素的个数决定，
+		 * dataArr这个数组是一个一维数组，数据的顺序：
+		 * r,g,b,alpha,r,g,b,alpha,r,g,b,alpha,...一直重复到最后一个
+		 * 每一个像素里面每一个信息点与下个像素里面对应的信息点差4
+		 * for(var i = 0;i<dataArr.length;i+=4){}
+
+		 * 2.putImageDate(dataArr,x,y);
+		 * dataArr: 表示图像信息
+		 * x,y:放置的一个位置
+		 */	
+		 	var bw = document.getElementById('bw_btn');
+		 	var fg = document.getElementById('fg_btn');
+		 	var rm = document.getElementById('rm_btn');
+			var div = document.getElementById('div');
+			var img = document.createElement('img');
+			img.src = 'img/b3b7d0a20cf431adf91f48764936acaf2fdd98ab.jpg';
+			img.onload = function(){
+				ctx.drawImage(img,0,0,500,700);
+//			}
+//			取色器
+			can.onclick = function(e){
+				var ev = e||event;
+				var x = ev.clientX - can.offsetLeft;
+				var y = ev.clientY - can.offsetTop;
+				var imageData = ctx.getImageData(x,y,1,1);
+				var r = imageData.data[0];
+				var g = imageData.data[1];
+				var b = imageData.data[2];
+				var a = imageData.data[3];
+				div.style.background = "rgba("+r+','+g+',' +b+ ','+a+")";
+			};
+			
+//		灰度图(黑白图): 取红绿蓝三个像素值,算算数平均值
+			bw.onclick = function(){
+				var imageData = ctx.getImageData(0,0,500,700);
+				for(var i = 0;i<imageData.data.length;i+=4){
+					var r = imageData.data[i];
+					var g = imageData.data[i+1];
+					var b = imageData.data[i+2];
+					var avr = (r+g+b)/3;
+					imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = avr;				
+				}
+				ctx.putImageData(imageData,0,0);
+			}
+			
+//		复古效果图:将红绿蓝三个像素值,分别乘一个权重(系数)
+			fg.onclick = function(){
+				var imageData = ctx.getImageData(0,0,500,700);
+				for(var i = 0;i<imageData.data.length;i+=4){
+					var r = imageData.data[i];
+					var g = imageData.data[i+1];
+					var b = imageData.data[i+2];
+					imageData.data[i] = (r * 0.393)+(g * 0.769)+(b * 0.189);
+					imageData.data[i+1] = (r * 0.349)+(g * 0.686)+(b * 0.168);
+					imageData.data[i+2] = (r * 0.272)+(g * 0.534)+(b * 0.131);;
+				}
+				ctx.putImageData(imageData,0,0);
+			}
+
+//		红色蒙版图（使图像呈现一种偏红的效果）：将红色值设置为红绿蓝三个值的平均值，其他值不变
+			rm.onclick = function(){
+				var imageData = ctx.getImageData(0,0,500,700);
+				for(var i = 0;i<imageData.data.length;i+=4){
+					var r = imageData.data[i];
+					var g = imageData.data[i+1];
+					var b = imageData.data[i+2];
+					imageData.data[i] = (r+g+b)/3;
+					imageData.data[i+1] = imageData.data[i+2] = 0;
+				}
+				ctx.putImageData(imageData,0,0);
+			}
+		
+		
+			}
+		}
+		</script>
+	</body>
+</html>
