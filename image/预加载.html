@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>预加载</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#loading {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				color: white;
+				font-weight: bolder;
+				font-size: 30px;
+				background: black;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="loading">
+				<span>0%</span> loading.....
+			</div>
+			<img src="img/t1.png" alt="" />
+			<img src="img/t2.png" alt="" />
+			<img src="img/t3.png" alt="" />
+			<img src="img/t4.png" alt="" />
+			<img src="img/t5.png" alt="" />
+			<img src="img/t6.png" alt="" />
+			<img src="img/t7.png" alt="" />
+			<img src="img/t8.png" alt="" />
+		</div>
+		<script type="text/javascript">
+			/*			图片预加载:
+						提前加载图片,当用户需要查看时可以直接从本地缓存中渲染
+			*/
+			window.onload = function() {
+				var mask = document.getElementById("loading");
+				var num = document.getElementsByTagName("span")[0];
+				var imgArr = ["img/t1.png", "img/t2.png", "img/t3.png", "img/t4.png", "img/t5.png", "img/t6.png", "img/t7.png", "img/t8.png"];
+
+				function loading(arr, func) {
+//					num.innerText = 'asdasd';
+					var index = 0;
+					for(var i = 0; i < arr.length; i++) {
+						//					1.每遍历一张图片就创建一个img对象
+						var img = document.createElement("img");
+						//					2.把遍历的地址赋给创建的img对象中
+						img.src = arr[i];
+//						img.i = i;
+						
+						img.onload = function() {
+								index++;
+								// alert(num.innerHTML);
+								num.innerHTML = parseInt(index/ arr.length * 100) + "%";
+								console.log(parseInt(index/ arr.length * 100) + "%");
+//								console.log(num.innerHTML);
+								if(index === arr.length) {
+									func();
+								}
+						}
+					}
+				}
+				loading(imgArr, function() {
+					mask.style.display = "none";
+				});
+			}
+		</script>
+	</body>
+
+</html>

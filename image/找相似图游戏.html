@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>相似图游戏</title>
+		<style type="text/css">
+			body {
+				background: antiquewhite;
+			}
+			/*剩余时间*/
+			#time {
+				width: 200px;
+				height: 30px;
+				margin: 0 auto;
+				text-align: center;
+			}
+			/*分数*/
+			#score {
+				width: 200px;
+				height: 30px;
+				margin: 0 auto;
+				text-align: center;
+			}
+			/*开始游戏*/
+			#start {
+				display: block;
+				width: 100px;
+				height: 30px;
+				margin: 0 auto 20px;
+			}
+			/*图片容器*/
+			#wrap {
+				width: 90%;
+				margin: auto;
+				/*border: 1px solid gray;*/
+				max-width: 400px;
+			}
+			/*图片*/
+			#wrap img {
+				width: 100%;
+				/*height: 100%;*/
+				background: blue;
+				float: left;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div id="time">剩余时间：10秒</div>
+		<div id="score">分数：0分</div>
+		<input type="button" name="" id="start" value="开始游戏" />
+		<div id="wrap">
+			<img src="img/1.png" />
+		</div>
+		<script type="text/javascript">
+//		获取各个标签
+			var timeDiv = document.getElementById("time");
+			var scoreDiv = document.getElementById("score");
+			var startBtn = document.getElementById("start");
+			var wrap = document.getElementById("wrap");
+//			图片容器里面的img标签集合，主要用来添加目标图片
+			var imgTarget = wrap.getElementsByTagName("img");
+//			分数
+			var score = 0;
+//			通关数，平方相当于图片的生成数
+			var index = 0;
+//			判断开始按钮能否点击
+			var isStart = false;
+//			开始按钮点击时间
+			startBtn.onclick = function() {
+//				如果为true 就跳出
+				if(isStart){return;};
+				isStart = true;
+				index++;
+				//	开始倒计时
+				timeCount();
+				//	创建下一关
+				createNext(index * index);
+			};
+			//	创建下一关
+			function createNext(count) {
+				wrap.innerHTML = '';
+				for(var i = 0; i < count; i++) {
+					var img = new Image();
+					//	单张图片的宽度 = (wrap的宽度-间隙宽度)/一排的个数(关数)
+					img.style.width = (wrap.offsetWidth - (index + 1) * 5) / index + "px";
+					img.style.marginLeft = "5px";
+					img.style.marginTop = "5px";
+					img.src = "img/2.png";
+					wrap.appendChild(img);
+					//						console.log("1");
+				}
+				picOnclick(count);
+			}
+			//	目标图片替换，点击目标图片,正确下一关
+			function picOnclick(count) {
+				if(count === 1) {
+					imgTarget[0].onclick = function() {
+						index++;
+						createNext(index * index);
+					}
+				} else {
+					//	用一张不同的图片随机替换图片,即为目标图片
+					var target = parseInt(Math.random() * (count - 0) + 0);
+//					目标图替换
+					imgTarget[target].src = "img/1.png";
+//					点击正确加分,进入下一关
+					imgTarget[target].onclick = function() {
+						score += 10;
+						scoreDiv.innerHTML = "分数："+score+"分";
+						index++;
+						createNext(index * index);
+					}
+				}
+			}
+			//	倒计时
+			function timeCount() {
+				clearInterval(timeID);
+				var n = 10;
+				timeDiv.innerHTML = "剩余时间：10秒";
+				var timeID = setInterval(function() {
+					n -= 1;
+					timeDiv.innerHTML = "剩余时间：" + n + "秒";
+//					结束所有还原
+					if(n === -1) {
+						alert("游戏结束！"+"分数："+score+"分！");
+						clearInterval(timeID);
+						timeDiv.innerHTML = "剩余时间：10秒";
+						scoreDiv.innerHTML = "分数：0分";
+						score = 0;
+						index = 0;
+						wrap.innerHTML = '';
+						img = new Image();
+						img.src = "img/1.png";
+						wrap.appendChild(img);
+						isStart = false;
+					}
+				}, 1000);
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>懒加载</title>
+		<style type="text/css">
+			ul{
+				width: 800px;
+				padding: 0;
+				margin: 100px auto 0;
+			}
+			li{
+				list-style: none;
+				width: 800px;
+				height: 500px;
+				margin-bottom: 100px;
+				border: 1px solid gray;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<ul>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+			<li><img src="img/14.jpg" data-img = "http://desk.fd.zol-img.com.cn/t_s960x600c5/g5/M00/01/0E/ChMkJlbKwXiIZMfjAAop1y3Kq4gAALGYwFtq5wACinv452.jpg"/></li>
+		</ul>
+		<script type="text/javascript">
+/*		1.图片懒加载的定义
+			图片懒加载页脚图片延迟加载.
+		2.图片懒加载运用范围
+		2.1 图片比较多大的一些网页，美丽说这些网站
+		2.2 或者一些导购网站，例：淘宝，京东
+		
+		3.图片懒加载步骤
+		3.1 image中scr放一张占位图
+		3.2 真实图片放到data-*（其中，可以任意取名）中
+		3.3 配合页面滚动事件使用
+		滚动时判断：待加载的资源相对于浏览器顶端的距离(offsetTop)<= 
+			可视区相对于浏览器顶端的距离(document.scrollTop+window.innerHeight)，如果true 就把真实图片的地址赋给src进行加载显示
+*/
+		window.onload = function(){
+			var lis = document.getElementsByTagName("li");
+			window.onscroll = function(){
+//				1.获取当前窗口滚动的一个高度(前者标准后者IE支持的方法)
+				var scrollTop = document.body.scrollTop||document.documentElement.scrollTop;
+//				2.获取可视区域的一个高度(前者标准后者IE支持的方法)
+				var height = window.innerHeight||document.documentElement.clientHeight;
+				
+//				开始设置
+				for(var i = 0;i<lis.length;i++){
+					var img = lis[i].children[0];
+					if(lis[i].offsetTop <= (scrollTop+height)){
+						img.src = img.getAttribute("data-img");
+						img.style.cssText += "width: 100%;height: 100%;"; 
+//						img.removeAttribute("data-img");
+					}
+				}
+			};
+		};
+		
+		</script>
+	</body>
+</html>
