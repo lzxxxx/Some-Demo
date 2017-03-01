@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>pageSort</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">  
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="js/angular.min.js"></script>
+	<style type="text/css">
+		.active{
+			color: red !important;
+		}
+	</style>
+</head>
+<body ng-app="myApp" ng-controller="myController">
+	<table class="table table-striped">
+		<tr>
+			<td>ID</td>
+			<td>NAME</td>
+			<td>con</td>
+		</tr>
+		<tr ng-repeat="obj in arr">
+			<td>{{obj.ID}}</td>
+			<td>{{obj.name}}</td>
+			<td>{{obj.content}}</td>
+		</tr>
+	</table>
+	<ul class="pagination">
+    <li><a href="#" ng-click="prev()">&laquo;</a></li>
+    <li ><a href="#" ng-repeat="p in pages" ng-click="getData(p)" ng-class="index==p?'active':''">{{p}}</a></li>
+    <li><a href="#" ng-click="next()">&raquo;</a></li>
+	</ul>
+
+</body>
+	<script>
+	  var app = angular.module("myApp",[])
+	  .controller("myController",function($scope,$http){
+	  	$scope.arr = [];
+	  	$scope.len = 0;
+	  	$scope.num = 5;
+	  	$scope.index = 1;	
+	  	$scope.getData = function(n){
+	  		$scope.index = n;
+	  		$http.get("http://www.lzx.cn:8888/angular.php?index="+$scope.index).success(function(data){
+		  		$scope.arr = data.data;
+		  		$scope.pageFn(data.len);
+	  		})
+	  	}
+	  	$scope.getData($scope.index);
+	  	$scope.pageFn = function(len){
+	  		$scope.len = Math.ceil(len/$scope.num);
+	  		var arr = [];
+	  		var s = $scope.index>5?($scope.index-5):1;
+	  		if(s+10>$scope.len && $scope.len>10){
+	  			s = $scope.len-9;
+	  		}
+	  		for (var i = s; i < 10+s; i++) {
+	  			if(i>$scope.len){break;}
+	  			arr.push(i);
+	  		};
+	  		$scope.pages = arr;
+	  	}
+	  	$scope.prev = function(){
+	  		$scope.index--;
+	  		if($scope.index <= 1){
+	  			$scope.index = 1;
+	  		}
+	  		$scope.getData($scope.index);
+	  	}
+	  	$scope.next = function(){
+	  		$scope.index++;
+	  		if($scope.index >= $scope.len){
+	  			$scope.index = $scope.len;
+	  		}
+	  		$scope.getData($scope.index);
+	  	}
+	  })
+	</script>
+</html>
